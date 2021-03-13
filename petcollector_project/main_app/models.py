@@ -23,7 +23,7 @@ class Pet(models.Model):
 
     # New method for feed_for_today
     def fed_for_today(self):
-        return self.feeding_set.filter(date=date.today()).count() >= len(MEALS)
+        return len( self.feeding_set.filter(date=date.today()) )
         
 class Feeding(models.Model):
     date = models.DateField("Feeding Date")
