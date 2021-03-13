@@ -11,12 +11,21 @@ MEALS = (
     ('D', 'Dinner')
 )
 
+class Toy(models.Model):
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
 class Pet(models.Model):
     name = models.CharField(max_length=100)
     species = models.CharField(max_length=100)
     breed = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
     age = models.IntegerField()
+    # M:M relationship
+    toys = models.ManyToManyField(Toy, blank=True)
 
     def __str__(self):
         return self.name
@@ -42,5 +51,6 @@ class Feeding(models.Model):
     # change the default sort
     class Meta:
         ordering = ['-date']
+
 
     
