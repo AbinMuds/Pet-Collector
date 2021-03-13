@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Pet, Toy
-from .forms import FeedingForm
+from .forms import FeedingForm, PetForm
 
 def home(request):
     return render(request, 'home.html')
@@ -11,11 +11,33 @@ def about(request):
 # Views for page with all pets
 def pets_index(request):
     pets = Pet.objects.all()
-    return render(request, "pets/index.html" , {"pets" : pets})
+    return render(request, "pets/index.html", {"pets" : pets})
 
 # To create new pets 
 def pets_new(request):
-    pass
+    # create a instance of the petform filled with submitted values or nothing
+    pet_form = PetForm(request.POST or None)
+    if request.POST and pet_form.is_valid:
+        pet_form.save()
+        return redirect('index')
+    else:
+        return render(request, "pets/new.html", {"pet_form" : pet_form})
+
+# edit pet details
+def pets_edit(request, pet_id):
+    # instance of Pet
+    pet = Pet.objects.get(id=pet_id)
+    pet_form = PetForm(request.POST or None, instance=pet)
+    if request.POST and pet_form.is_valid:
+        pet_form.save()
+        return redirect('detail', pet_id=pet_id)
+    else:
+        return render(request, 'pets/edit.html', { 'pet': pet, 'pet_form': pet_form })
+
+# Delete pets
+def pets_delete(request, pet_id):
+    Pet.objects.get(id=pet_id).delete()
+    return redirect('index')
 
 # Views for page with the detail of the pet with its id
 def pets_detail(request, pet_id):

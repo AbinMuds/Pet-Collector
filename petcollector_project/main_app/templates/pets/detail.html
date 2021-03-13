@@ -15,6 +15,13 @@
                         <p>This pet is small than 1 year. Please take care of it.</p>
                     {% endif %}
                 </div>
+                <div class="card-action">
+                    <a href="{% url 'edit' pet.id %}">Edit</a>
+                    <form method="POST" action="{% url 'delete' pet.id %}">
+                        {% csrf_token %}
+                        <input type="submit" class="btn" value="Delete">
+                    </form>
+                </div>
             </div>
         </div>
         <div class="col s6">
