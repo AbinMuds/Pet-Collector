@@ -7,4 +7,6 @@ urlpatterns = [
     path('pets/', views.pets_index, name="index"),
     path('pets/<int:pet_id>/', views.pets_detail, name="detail"),
     path('pets/<int:pet_id>/add_feeding/', views.add_feeding, name="add_feeding"),
+    # associate a toy with a pet
+    path('pets/<int:pet_id>/assoc_toy/<int:toy_id>/', views.assoc_toy, name='assoc_toy'),
 ]
