@@ -4,7 +4,7 @@
 
     {% for pet in pets %}
         <div class="card">
-            <a href="/pets/{{ pet.id }}">
+            <a href="{% url 'detail' pet.id %}">
                 <div class="card-content">
                     <span class="card-title">{{ pet.name }}</span>
                     <p> Species: {{ pet.species }}</p>
