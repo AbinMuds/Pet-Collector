@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+from datetime import date
 
 # Create your models here.
 
@@ -18,6 +20,10 @@ class Pet(models.Model):
 
     def __str__(self):
         return self.name
+
+    # New method for feed_for_today
+    def fed_for_today(self):
+        return self.feeding_set.filter(date=date.today()).count() >= len(MEALS)
         
 class Feeding(models.Model):
     date = models.DateField("Feeding Date")
