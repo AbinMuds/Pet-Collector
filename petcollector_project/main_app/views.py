@@ -2,8 +2,32 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import Pet, Toy
+import uuid
+import boto3
+from .models import Pet, Toy, Photo
 from .forms import FeedingForm, PetForm
+
+S3_BASE_URL = 'https://s3-ap-southeast-1.amazonaws.com/'
+BUCKET = 'pet-collector'
+
+def add_photo(request, pet_id):
+    # photo-file will be the "name" attribute on the <input type="file">
+    photo_file = request.FILES.get('photo-file', None)
+    if photo_file:
+        s3 = boto3.client('s3')
+        # need a unique "key" for S3 / needs image file extension too
+        key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+        # just in case something goes wrong
+        try:
+            s3.upload_fileobj(photo_file, BUCKET, key)
+            # build the full url string
+            url = f"{S3_BASE_URL}{BUCKET}/{key}"
+            # we can assign to pet_id or pet (if you have a pet object)
+            photo = Photo(url=url, pet_id=pet_id)
+            photo.save()
+        except:
+            print('An error occurred uploading file to S3')
+    return redirect('detail', pet_id=pet_id)
 
 def home(request):
     return render(request, 'home.html')
@@ -23,9 +47,9 @@ def pets_new(request):
     # create a instance of the petform filled with submitted values or nothing
     pet_form = PetForm(request.POST or None)
     if request.POST and pet_form.is_valid:
-        new_cat = pet_form.save(commit=False)
-        new_cat.user = request.user
-        new_cat.save()
+        new_pet = pet_form.save(commit=False)
+        new_pet.user = request.user
+        new_pet.save()
         return redirect('index')
     else:
         return render(request, "pets/new.html", {"pet_form" : pet_form})

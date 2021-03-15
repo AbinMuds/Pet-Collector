@@ -13,5 +13,6 @@ urlpatterns = [
     path('pets/new/', views.pets_new, name="new"),
     path('pets/<int:pet_id>/edit/', views.pets_edit, name="edit"),
     path('pets/<int:pet_id>/delete/', views.pets_delete, name="delete"),
+    path('pets/<int:pet_id>/add_photo/', views.add_photo, name='add_photo'),
     path('accounts/signup/', views.signup, name='signup'),
 ]
